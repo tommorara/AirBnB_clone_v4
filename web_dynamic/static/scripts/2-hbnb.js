@@ -1,31 +1,41 @@
-const $ = window.$;
-$(document).ready(function () {
-  const myAmenities = {};
-  let myList = [];
-  const checkbox = $('.amenities input[type="checkbox"]');
-  checkbox.prop('checked', false);
-  checkbox.change(function () {
-    const dataId = $(this).attr('data-id');
-    const dataName = $(this).attr('data-name');
-    if (this.checked) {
-      myAmenities[dataId] = dataName;
-    } else {
-      delete (myAmenities[dataId]);
-    }
-    for (const key in myAmenities) {
-      myList.push(myAmenities[key]);
-    }
-    const output = myList.join(', ');
-    $('div.amenities > h4').text(output);
-    myList = [];
-  });
+$(function () {
+	const selectedAmenityIds = [];
+	const selectedNames = [];
+	
+	$('input').change(function () {
+		const isChecked = this.checked;
+		const amenityId = this.dataset.id;
+		const amenityName = this.dataset.name;
 
-  const apiStatus = $('DIV#api_status');
-  $.ajax('http://0.0.0.0:5001/api/v1/status/').done(function (data) {
-    if (data.status === 'OK') {
-      apiStatus.addClass('available');
-    } else {
-      apiStatus.removeClass('available');
-    }
-  });
+		if (isChecked) {
+			selectedAmenityIds.push(amenityId)
+			selectedNames.push(amenityName);
+		} else {
+			const index = selectedAmenityIds.indexOf(amenityId);
+			const indexOfName = selectedNames.indexOf(amenityName);
+		
+			if (index > -1) {
+				selectedAmenityIds.splice(index, 1);
+			}
+
+			if (indexOfName > -1) {
+				selectedNames.splice(indexOfName, 1);
+			}
+		}
+
+		$('.amenities h4').text(selectedNames.join(", "));		
+	})
+
+	$.ajax({
+		url: 'http://localhost:5001/api/v1/status',
+		method: 'GET',
+		success: function (response) {
+
+			if (response.status === 'OK') {
+				$('div#api_status').addClass('available');
+			} else {
+				$('div#api_status').removeClass('available');
+			}
+		}
+	})
 });
