@@ -97,6 +97,7 @@ Once you have completed the project, request a manual QA review by following the
 
 ## Authors
 - **Tom Nyabuto**
+- **Kelvin Mabonga**
 
 ## License
 
